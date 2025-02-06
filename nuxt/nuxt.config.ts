@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   app :{
+
     head : {
         link : [
             {href:"https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&display=swap", rel:'stylesheet'}
@@ -12,5 +13,13 @@ export default defineNuxtConfig({
     '~/assets/main.scss',
     "remixicon/fonts/remixicon.css",
   ],
-  devtools: { enabled: false }
+  devServer: {
+    host: "bariq.app",
+    port: 403,
+    https: {
+      cert: "C:\\laragon\\etc\\ssl\\laragon.crt",
+      key: "C:\\laragon\\etc\\ssl\\laragon.key",
+    },
+  },
+  devtools: { enabled: false },
 })
