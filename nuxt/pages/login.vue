@@ -1,15 +1,13 @@
 <script setup lang="ts">
-
 const login = ref({
-    email : "",
-    password: ""
+    email: "",
+    password: "",
 });
 
 const erros = ref({
-    email : "",
-    password: ""
+    email: "",
+    password: "",
 });
-
 </script>
 
 <template>
@@ -24,24 +22,21 @@ const erros = ref({
                         <input
                             v-model="login.email"
                             type="email"
-
                             name="email"
-
                             autocomplete="on"
                         />
                     </div>
-                    <p class="err">{{erros.email}}</p>
+                    <p class="err">{{ erros.email }}</p>
 
                     <div>
                         <label>كلمة المرور</label>
                         <input
                             v-model="login.password"
                             type="password"
-
                             name="password"
                         />
                     </div>
-                    <p class="err">{{erros.password}}</p>
+                    <p class="err">{{ erros.password }}</p>
                 </div>
 
                 <div class="actions">
@@ -55,7 +50,7 @@ const erros = ref({
             </div>
         </div>
         <div class="left">
-        <img class="pattren" src="~/assets/images/pattren-big.svg" />
+            <img class="pattren" src="~/assets/images/pattren-big.svg" />
         </div>
     </div>
 </template>

@@ -6,26 +6,30 @@
     top: 0;
     display: flex;
     > div {
-      width: 50%;
+    //   width: 50%;
       height: 100%;
       display: inline-block;
       display: flex;
       justify-content: center;
       align-items: center;
 
+      flex-wrap: wrap;
+      flex: 1 1 50%;
+
       &.left {
-        width: 60%;
+        // flex: 1 1 50%;
         position: relative;
 
         .pattren {
             height: 100%;
+            z-index: -1;
         }
 
       }
 
       &.rigth {
+        flex: 1 0 50%;
 
-        overflow: auto;
 
         .form {
           width: 300px;
