@@ -1,0 +1,93 @@
+.login-page {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    display: flex;
+    > div {
+      width: 50%;
+      height: 100%;
+      display: inline-block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &.left {
+        width: 60%;
+        position: relative;
+
+        .pattren {
+            height: 100%;
+        }
+
+      }
+
+      &.rigth {
+
+        overflow: auto;
+
+        .form {
+          width: 300px;
+          background-color: $color_white;
+          padding:30px 30px;
+          padding-bottom: 17px;
+          border-radius: 42px;
+
+
+
+            .logo {
+              width: 90px;
+
+            }
+
+
+          .fields {
+
+            > div {
+                margin-top: 14px;
+                label {
+                    color: $color_b;
+                    font-size: 17px;
+                }
+
+                input {
+                    @extend .main-input
+                }
+            }
+            .err {
+              color: $color_red;
+              font-weight: normal;
+            }
+
+          }
+
+          .actions {
+            .forget-password {
+                color: $color_b;
+                margin-top: 20px;
+                display: block;
+            }
+
+
+            .submit {
+                @extend .main-button;
+                display: block;
+                width: 100%;
+                margin-top: 0px !important;
+                font-weight: 600;
+
+            }
+
+            .pattren {
+                display: block;
+                margin:  0 auto;
+                margin-top: 13px;
+            }
+          }
+
+
+        }
+      }
+    }
+}

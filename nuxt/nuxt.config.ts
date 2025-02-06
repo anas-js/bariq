@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
+  ssr: false,
   app :{
 
     head : {
@@ -10,12 +11,12 @@ export default defineNuxtConfig({
     }
   },
   css:[
-    '~/assets/main.scss',
+    '~/assets/styles/main.scss',
     "remixicon/fonts/remixicon.css",
   ],
   devServer: {
     host: "bariq.app",
-    port: 403,
+    port: 3000,
     https: {
       cert: "C:\\laragon\\etc\\ssl\\laragon.crt",
       key: "C:\\laragon\\etc\\ssl\\laragon.key",

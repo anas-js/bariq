@@ -1,0 +1,33 @@
+
+// elemints
+
+.main-input {
+    background-color: $color_white_b;
+    border: none;
+    outline: none;
+    color: $color_a;
+    width: 100%;
+    display: block;
+    padding: 7px 10px;
+    font-size: 17px;
+    box-sizing: border-box;
+    border-radius: 14px;
+
+    &::placeholder {
+        color: $color_white_c;
+    }
+}
+
+
+.main-button {
+    background-color: $color_a;
+    border: none;
+    outline: none;
+    color: $color_white;
+    width: 100%;
+    display: block;
+    padding: 7px 10px;
+    font-size: 18px;
+    box-sizing: border-box;
+    border-radius: 14px;
+}

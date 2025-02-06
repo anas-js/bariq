@@ -4,4 +4,17 @@
     font-family: "Baloo Bhaijaan 2";
 }
 
+// Base
+@import 'colors.scss';
+@import 'global.scss';
 
+body {
+    direction: rtl;
+    background-color: $color_backgroud;
+}
+
+
+
+
+// Pages
+@import 'pages/login.scss';
