@@ -16,10 +16,36 @@
       flex-wrap: wrap;
       flex: 1 1 50%;
 
+
+      @keyframes toBottom {
+        40% {
+            background-color: $color_backgroud;
+        }
+        45% {
+            background-color: $color_a;
+
+        }
+
+        95% {
+            background-color: $color_a;
+
+        }
+        100% {
+            background-position-y: 100vh;
+            background-color: $color_backgroud;
+        }
+      }
       &.left {
         // flex: 1 1 50%;
         position: relative;
-
+        background-image: url('~/assets/images/pattren-big.svg');
+        background-size: cover;
+        // background-position: center;
+        background-position-x: center;
+        background-color: $color_backgroud;
+        background-position-y: 0vh;
+        animation: toBottom infinite 10s linear;
+        // border-radius: 0 100px 100px 0;
         .pattren {
             height: 100%;
             z-index: -1;
@@ -80,6 +106,7 @@
                 width: 100%;
                 margin-top: 0px !important;
                 font-weight: 600;
+                cursor: pointer;
 
             }
 

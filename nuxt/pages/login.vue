@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const loading = ref();
 const login = ref({
     email: "",
     password: "",
@@ -8,6 +9,29 @@ const erros = ref({
     email: "",
     password: "",
 });
+
+function userLogin() {
+    loading.value = true;
+    erros.value.email = "";
+    erros.value.password = "";
+
+    // error handling
+    if(!login.value.email) {
+        erros.value.email = "لا يمكن ترك هذل الحقل فارغاً"
+    }
+
+    if(!login.value.password) {
+        erros.value.password = "لا يمكن ترك هذل الحقل فارغاً"
+    }
+
+    if(erros.value.email || erros.value.password) {
+        return;
+    }
+
+    // login
+
+
+}
 </script>
 
 <template>
@@ -44,13 +68,13 @@ const erros = ref({
                         نسيت كلمة المرور؟
                     </NuxtLink>
 
-                    <button class="submit">تسجيل الدخول</button>
+                    <button @click="userLogin()" class="submit"><template v-if="!loading">تسجيل الدخول</template><template v-else><Loading /></template></button>
                     <img class="pattren" src="~/assets/images/pattren.svg" />
                 </div>
             </div>
         </div>
         <div class="left">
-            <img class="pattren" src="~/assets/images/pattren-big.svg" />
+            <!-- <img class="pattren" src="~/assets/images/pattren-big.svg" /> -->
         </div>
     </div>
 </template>

@@ -13,6 +13,10 @@ body {
     background-color: $color_backgroud;
 }
 
+::selection {
+    background-color: $color_a;
+    color: $color_backgroud;
+}
 
 
 
