@@ -1,8 +1,14 @@
 <script setup lang="ts">
-const loading = ref();
+const $auth = useAuth();
+definePageMeta({
+    login: true,
+});
+
+const loading = ref(false);
+
 const login = ref({
-    email: "",
-    password: "",
+    email: "kaled",
+    password: "12345678",
 });
 
 const erros = ref({
@@ -10,37 +16,53 @@ const erros = ref({
     password: "",
 });
 
-function userLogin() {
+async function userLogin() {
     loading.value = true;
+
     erros.value.email = "";
     erros.value.password = "";
 
     // error handling
-    if(!login.value.email) {
-        erros.value.email = "لا يمكن ترك هذل الحقل فارغاً"
+    if (!login.value.email) {
+        erros.value.email = "لا يمكن ترك هذل الحقل فارغاً";
     }
 
-    if(!login.value.password) {
-        erros.value.password = "لا يمكن ترك هذل الحقل فارغاً"
+    if (!login.value.password) {
+        erros.value.password = "لا يمكن ترك هذل الحقل فارغاً";
     }
 
-    if(erros.value.email || erros.value.password) {
+    if (erros.value.email || erros.value.password) {
         return;
     }
 
     // login
+    await $api
+        .post(useAppConfig().BK_URL.api + "/login", {
+            body: login.value,
+        })
+        .then((res) => {
+            $auth.setUser(res as any);
+            $auth.setLoginStatus(true);
 
+            setTimeout(() => {
+                navigateTo("/dashboard");
+            }, 1500);
+        })
+        .catch((e) => {
+            $errorViewer(erros.value, e.response._data.errors);
+        });
 
+    loading.value = false;
 }
 </script>
 
 <template>
-    <div class="login-page">
+    <div class="login-page" :class="{ 'login-done': $auth.loggedIn }">
         <div class="rigth">
             <div ref="form" class="form">
                 <img class="logo" src="~/assets/images/logo.svg" />
 
-                <div class="fields">
+                <div v-if="!$auth.loggedIn" class="fields">
                     <div>
                         <label>اسم المستخدم او البريد الإلكتروني</label>
                         <input
@@ -64,11 +86,27 @@ function userLogin() {
                 </div>
 
                 <div class="actions">
-                    <NuxtLink class="forget-password" to="">
+                    <NuxtLink
+                        v-if="!$auth.loggedIn"
+                        class="forget-password"
+                        to=""
+                    >
                         نسيت كلمة المرور؟
                     </NuxtLink>
 
-                    <button @click="userLogin()" class="submit"><template v-if="!loading">تسجيل الدخول</template><template v-else><Loading /></template></button>
+                    <button
+                        :disabled="loading || $auth.loggedIn"
+                        @click="userLogin()"
+                        class="submit"
+                    >
+                        <template v-if="$auth.loggedIn"
+                            >يا مرحبا {{ $auth.user?.name }}</template
+                        >
+
+                        <template v-else-if="loading"><Loading /></template>
+                        <template v-else>تسجيل الدخول</template>
+                    </button>
+
                     <img class="pattren" src="~/assets/images/pattren.svg" />
                 </div>
             </div>

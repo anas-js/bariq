@@ -5,6 +5,19 @@
     height: 100%;
     top: 0;
     display: flex;
+
+
+    &.login-done {
+        .left {
+            background-color: $color_green;
+        }
+        .rigth {
+            .submit {
+                background-color: $color_green !important;
+            }
+        }
+      }
+
     > div {
     //   width: 50%;
       height: 100%;
@@ -18,23 +31,24 @@
 
 
       @keyframes toBottom {
-        40% {
-            background-color: $color_backgroud;
-        }
-        45% {
-            background-color: $color_a;
+        // 40% {
+        //     background-color: $color_backgroud;
+        // }
+        // 45% {
+        //     background-color: $color_a;
 
-        }
+        // }
 
-        95% {
-            background-color: $color_a;
+        // 95% {
+        //     background-color: $color_a;
 
-        }
+        // }
         100% {
             background-position-y: 100vh;
-            background-color: $color_backgroud;
+            // background-color: $color_backgroud;
         }
       }
+
       &.left {
         // flex: 1 1 50%;
         position: relative;
@@ -45,6 +59,8 @@
         background-color: $color_backgroud;
         background-position-y: 0vh;
         animation: toBottom infinite 10s linear;
+        background-color: $color_a;
+        transition: 0.3s;
         // border-radius: 0 100px 100px 0;
         .pattren {
             height: 100%;
@@ -102,6 +118,7 @@
 
             .submit {
                 @extend .main-button;
+                transition: 0.3s;
                 display: block;
                 width: 100%;
                 margin-top: 0px !important;

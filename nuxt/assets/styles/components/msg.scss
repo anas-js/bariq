@@ -1,0 +1,110 @@
+.msg {
+  position: fixed;
+  width:250px;
+  z-index: 9999;
+  right: 20px;
+  top: 15vh;
+
+  box-sizing: content-box;
+
+  .box {
+    background-color: $color_white;
+    width: 100%;
+    box-shadow: 0 0 30px rgba($color: $color_black, $alpha:0.07);
+    border-radius:15px;
+    padding: 10px;
+    font-size: 18px;
+    box-sizing: border-box;
+    opacity: 0;
+    word-wrap: break-word;
+    word-wrap: anywhere;
+    overflow-wrap: anywhere;
+    // animation: showEle 1s forwards;
+
+    > * {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    p {
+      color: $color_b;
+      width: calc(100% - 35px);
+    }
+
+    i {
+      margin-left: 10px;
+      // font-size: 20px;
+      color: $color_a;
+    }
+
+    &:not(:first-of-type) {
+      margin-top: 15px;
+    }
+
+    &.error {
+      border: 1px solid $color_red;
+      i {
+        color: $color_red;
+      }
+    }
+
+    &.ok {
+      border: 1px solid $color_green;
+      i {
+        color: $color_green;
+      }
+    }
+
+    &.sure {
+      border: 1px solid $color_yellow;
+      i {
+        color: $color_yellow;
+      }
+    }
+
+    &.disabled {
+      border: 1px solid $color_white_c;
+       * {
+        color: $color_white_c !important;
+      }
+
+      .true,.fasle {
+       background-color: rgba($color: $color_white_c, $alpha: 0.5) !important;
+       border: 1px solid $color_white_c;
+      }
+    }
+
+
+    .buttons {
+      margin-top: 10px;
+      display: block;
+      height: 35px;
+      > div {
+        // float: left;
+        position: absolute;
+    left: 10px;
+        button {
+          padding: 4px 10px !important;
+
+        }
+        .true {
+          @extend .main-button;
+          i {
+            color: $color_a;
+          }
+
+        }
+
+        .false {
+          @extend .main-button;
+          i {
+            color: $color_b;
+          }
+        }
+      }
+
+
+
+    }
+  }
+}
