@@ -10,7 +10,7 @@
 
 body {
     direction: rtl;
-    background-color: $color_backgroud;
+    background-color: $color_white;
 }
 
 ::selection {
@@ -23,7 +23,10 @@ body {
 // Pages
 @import 'pages/login.scss';
 
-
+@import 'pages/dashboard.scss';
+@import 'pages/dashboard/index.scss';
 // Cop
 
 @import 'components/msg.scss';
+
+

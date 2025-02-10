@@ -1,0 +1,75 @@
+.dashboard-page {
+
+    .statistics {
+        display: flex;
+        margin-top: 30px;
+        > div {
+            width: 350px;
+            // flex: 1 0 350px ;
+            padding: 20px 24px;
+            background-color: $color_white;
+            border-radius: 37.92px;
+            position: relative;
+            padding-bottom: 70px;
+            // overflow: hidden;
+
+            .top {
+                > * {
+                    display: inline-block;
+                }
+                .title {
+                    font-size: 17px;
+                    color: $color_b;
+                }
+
+                .tag {
+                    display: inline-block;
+                    padding: 0px 7px;
+                    direction: ltr;
+                    border-radius: 24px;
+                    font-weight: bold;
+                    margin-inline-end: 10px;
+                    &.green {
+                        background-color: rgba($color: $color_green, $alpha: 0.2);
+                        color: $color_green;
+                    }
+                }
+                .timeline {
+                   float: left;
+                   .date {
+                    color: $color_white_c;
+                   }
+                }
+            }
+
+            .value {
+                color: $color_a;
+                margin-top: -15px;
+
+                h2 {
+                    font-size: 47px;
+                }
+
+                > * {
+                    display: inline-block;
+                    font-weight: bold;
+                }
+
+            }
+
+            .chart {
+                position: absolute;
+                width: calc(100% + 10px);
+                bottom: 0;
+                left: -2px;
+                height: 60%;
+
+                canvas {
+                    overflow: hidden;
+                    // border-radius: 37.92px 0 0 37.92px ;
+                }
+            }
+
+        }
+    }
+}

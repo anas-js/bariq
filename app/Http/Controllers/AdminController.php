@@ -34,6 +34,6 @@ class AdminController extends Controller
     }
 
     public function user(Request $request) {
-        return $request->user;
+        return $request->user();
     }
 }

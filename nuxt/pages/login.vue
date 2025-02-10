@@ -60,7 +60,7 @@ async function userLogin() {
     <div class="login-page" :class="{ 'login-done': $auth.loggedIn }">
         <div class="rigth">
             <div ref="form" class="form">
-                <img class="logo" src="~/assets/images/logo.svg" />
+                <img  class="logo" src="~/assets/images/logo.svg" />
 
                 <div v-if="!$auth.loggedIn" class="fields">
                     <div>

@@ -46,15 +46,18 @@ const option = {
       });
     }
   },
+  retry : 0
 };
 
 export const $api = {
   get: $fetch.create({
     ...option,
     method: "GET",
+
   }),
   post: $fetch.create({
     ...option,
     method: "POST",
+
   }),
 };
