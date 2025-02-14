@@ -2,7 +2,8 @@
   position: fixed;
   width:250px;
   z-index: 9999;
-  right: 20px;
+//   right: 20px;
+left: 20px;
   top: 15vh;
 
   box-sizing: content-box;
@@ -42,35 +43,35 @@
     }
 
     &.error {
-      border: 1px solid $color_red;
+      border: 3px solid $color_red;
       i {
         color: $color_red;
       }
     }
 
     &.ok {
-      border: 1px solid $color_green;
+      border: 3px solid $color_green;
       i {
         color: $color_green;
       }
     }
 
     &.sure {
-      border: 1px solid $color_yellow;
+      border: 3px solid $color_yellow;
       i {
         color: $color_yellow;
       }
     }
 
     &.disabled {
-      border: 1px solid $color_white_c;
+      border: 3px solid $color_white_c;
        * {
         color: $color_white_c !important;
       }
 
       .true,.fasle {
        background-color: rgba($color: $color_white_c, $alpha: 0.5) !important;
-       border: 1px solid $color_white_c;
+       border: 3px solid $color_white_c;
       }
     }
 

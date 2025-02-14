@@ -1,12 +1,38 @@
 .dashboard-page {
 
+    .pre-timeline {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $color_b;
+        font-size: 20px;
+        user-select:none;
+        z-index: 10;
+        cursor: pointer;
+        .date {
+            font-weight: bold;
+            display: flex
+            ;
+                justify-content: center;
+                align-items: center;
+        }
+
+
+
+        .timeline-list {
+            width: 140px;
+        }
+    }
+
     .statistics {
         display: flex;
-        margin-top: 30px;
+
         gap: 20px;
+        flex-wrap: wrap;
         > div {
             // width: 350px;
-            flex: 1 0 33%;
+            flex: 1 0 calc(33% - 10px);
             box-sizing: border-box;
             padding: 20px 24px;
             background-color: $color_white;
@@ -14,7 +40,7 @@
             position: relative;
             padding-bottom: 90px;
 
-            // overflow: hidden;
+
 
             .top {
                 > * {
@@ -45,6 +71,7 @@
                 .timeline {
                     position: relative;
                     cursor: pointer;
+                    user-select: none;
                    float: left;
 
                    &:hover {
@@ -63,37 +90,201 @@
                 }
             }
 
-            .value {
-                color: $color_a;
-                margin-top: -15px;
 
-                h2 {
-                    font-size: 47px;
-                }
-                p {
-                    margin-inline-start: 5px;
+            &.lineChart {
+                .value {
+                    color: $color_a;
+                    margin-top: -15px;
+
+                    h2 {
+                        font-size: 47px;
+                    }
+                    p {
+                        margin-inline-start: 5px;
+                    }
+
+                    > * {
+                        display: inline-block;
+                        font-weight: bold;
+                    }
+
                 }
 
-                > * {
-                    display: inline-block;
-                    font-weight: bold;
+                .chart {
+                    position: absolute;
+                    width: calc(100% + 16px);
+                    bottom: 0;
+                    left: -8px;
+                    height: 53%;
+
+                    canvas {
+                        overflow: hidden;
+                        // border-radius: 37.92px 0 0 37.92px ;
+                    }
                 }
+            }
+
+
+            // Elements
+
+            &.activityTime {
+                // width: 33%;
+                // padding-bottom: 180px;
+                // flex: none;
+                // flex: 1 0 calc(33% - 10px);
+                padding: 20px 24px;
+
+                .chart {
+                    position: relative;
+                    height: 230px;
+                }
+            }
+
+            &.number-box {
+                // width:  calc(16.5% - 20px);
+                flex: 1 0 calc(16.5% - 20px);
+                // flex: none;
+                text-align: center;
+                padding: 20px 24px;
+
+                // padding-bottom: 24px;
+
+                .title {
+                    font-size: 17px;
+                    color: $color_b;
+                }
+
+                .content {
+                    display: flex;
+                    height: calc(100% - 34px);
+                    justify-content: center;
+                    align-items: center;
+                    .value {
+                        h2 {
+                            color: $color_a;
+                            font-size: 80px;
+                        }
+
+                        p {
+                            color: $color_a;
+                            font-size: 26px;
+                            margin-top: -40px;
+                            font-weight: bold;
+
+                        }
+                    }
+
+                    .timeline {
+                        position: relative;
+                        margin-top: 20px;
+                        cursor: pointer;
+                        user-select: none;
+
+                       &:hover {
+                        .date {
+                            color: $color_b;
+                           }
+                       }
+                       .date {
+                        color: $color_white_c;
+                        transition: 0.3s;
+
+                        display: flex;
+                            justify-content: center;
+                            align-items: center;
+                       }
+
+                       .timeline-list {
+                        left: 50%;
+                        transform: translateX(-50%);
+                       }
+                    }
+                }
+
 
             }
 
-            .chart {
-                position: absolute;
-                width: calc(100% + 16px);
-                bottom: 0;
-                left: -8px;
-                height: 53%;
+            &.mostServicesOrder {
+                padding: 20px 24px;
+                color: $color_a;
 
-                canvas {
-                    overflow: hidden;
-                    // border-radius: 37.92px 0 0 37.92px ;
+                .servers-order {
+                    font-size: 18px;
+                    > div {
+                        margin-top: 10px;
+                        display: flex;
+                        // > * {
+                        //     width: 50%;
+                        // }
+
+                        .title {
+                            width: 40%;
+                        }
+
+
+                        .pc {
+                            width: 60%;
+                           text-align: left;
+                            font-weight: bold;
+
+                            .bar {
+                                display: block;
+                                float: left;
+                                background-color: $color_a;
+                                width: 20%;
+                                border-radius: 23px;
+                                height: 4px;
+                            }
+                        }
+                    }
                 }
             }
 
         }
+    }
+
+    .last-orders {
+        margin-top: 50px;
+        color: $color_a;
+        font-size: 20px;
+
+
+        .title {
+            position: relative;
+            a {
+                text-decoration: none;
+                position: absolute;
+                left: 0;
+                top: 50%;
+                color: $color_b;
+                font-weight: bold;
+                transform: translateY(-50%);
+            }
+        }
+
+        .table {
+            margin-top: 10px;
+
+            .expand {
+                display: block;
+                width: fit-content;
+                margin: 0 auto;
+                padding: 10px;
+
+
+                i {
+                    display: block;
+                }
+                @extend .main-button;
+                color: $color_a;
+                background: none;
+                cursor: pointer;
+            }
+
+            .customer {
+                cursor: pointer;
+            }
+        }
+
     }
 }

@@ -31,3 +31,20 @@
     box-sizing: border-box;
     border-radius: 14px;
 }
+
+
+.scroll-bar {
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color:rgba($color: $color_a, $alpha: 0.1);
+      border-radius: 25px;
+    }
+
+  }

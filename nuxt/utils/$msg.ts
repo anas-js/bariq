@@ -5,7 +5,7 @@ let variables : any = {};
 
 type MsgOption = {
   text: string | string[];
-  type?: string;
+  type?: "error" | "ok" | "sure";
   time?: number;
   wait?: number;
   btns?: { t: () => void; f?: () => void };
@@ -21,7 +21,7 @@ class Msg {
 
   // User control
   private text: string | string[]; // msg: Message text
-  private type: string | undefined; // type: error,ok
+  private type: "error" | "ok" | "sure"  | undefined; // type: error,ok
   private time: number | undefined = 5000; // time: Time To Remove Message After...
   private btns: { t: () => void; f?: () => void } | undefined; // btns: if you need buttons => on click do something
   private wait: number | undefined = 300; // wait: Wait Time Before show Next Message

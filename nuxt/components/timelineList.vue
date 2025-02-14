@@ -1,7 +1,9 @@
 <script setup lang="ts">
+const el = ref() as Ref<HTMLElement>;
+
 const emits = defineEmits(["select"]);
 const active = ref(false);
-const selectTimesActive = ref(false);
+
 const loading = ref(false);
 
 const timeList = [
@@ -39,6 +41,9 @@ const timeList = [
 ];
 
 function close() {
+    if (loading.value) {
+        return;
+    }
     active.value = false;
 }
 
@@ -50,22 +55,45 @@ defineExpose({
         if (loading.value) {
             return;
         }
+
         active.value = !active.value;
     },
     close,
+    loading() {
+        active.value = true;
+        loading.value = true;
+
+
+    },
+    done() {
+        loading.value = false;
+        active.value = false;
+        enterTimeObj.value.status = false;
+        enterTimeObj.value.dir = "";
+
+        close();
+    },
 });
 
+// User Select Time From List
 function selectTime(time: any) {
-    // console.log(selectTimesActive.value);
     if (typeof time.value === "object") {
-        // console.log('show');
-        selectTimesActive.value = true
+        const element = enterTimeElement.value[0];
+        if (
+            element.parentElement!.getBoundingClientRect().left >
+            element.clientWidth
+        ) {
+            enterTimeObj.value.dir = "left";
+        } else {
+            enterTimeObj.value.dir = "rigth";
+        }
+        enterTimeObj.value.status = true;
         return;
     }
 
-    selectTimesActive.value = false;
+    enterTimeObj.value.status = false;
+    enterTimeObj.value.dir = "";
     loading.value = true;
-
 
     emits("select", {
         time,
@@ -77,11 +105,22 @@ function selectTime(time: any) {
     });
 }
 
-
-
+// User Enter Time
+const enterTimeObj = ref({
+    status: false,
+    dir: "",
+});
+const enterTimeElement = ref() as Ref<HTMLDivElement[]>;
 const timeStart = ref("2025-10-10");
 const timeEnd = ref("2025-10-20");
-function selectTimes() {
+function enterTime() {
+    if (timeStart.value > timeEnd.value) {
+        $msg({
+            text: "تاريخ البداية يجب ان يكون قبل تاريخ النهاية",
+            type: "error",
+        });
+        return;
+    }
     loading.value = true;
 
     emits("select", {
@@ -95,41 +134,65 @@ function selectTimes() {
         done() {
             loading.value = false;
             active.value = false;
-            selectTimesActive.value = false;
-            console.log("done",selectTimesActive.value);
+            enterTimeObj.value.status = false;
+            enterTimeObj.value.dir = "";
+
             close();
         },
     });
 }
+
+// Event List
+let handleClickOutSide: any = null;
+onMounted(() => {
+    handleClickOutSide = (event: any) => {
+        // @ts-ignore
+        if (!el.value.parentElement!.contains(event.target)) {
+            close();
+        }
+    };
+    document.addEventListener("click", handleClickOutSide);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", handleClickOutSide);
+});
 </script>
 
 <template>
-    <div class="timeline-list" :class="{ active: active }">
+    <div ref="el" class="timeline-list" :class="{ active: active }">
         <Loading v-if="loading" />
         <ul v-else>
             <li
                 v-for="(time, index) in timeList"
                 :index="index"
-                :class="{'selectTimes':typeof time.value === 'object'}"
+                :class="{ selectTimes: typeof time.value === 'object' }"
                 @click="selectTime(time)"
             >
                 {{ time.title }}
 
                 <template v-if="typeof time.value === 'object'">
                     <i class="icon ri-arrow-drop-left-line"></i>
-                    <div  class="select-date" :class="{active:selectTimesActive}">
-                    <div>
-                        <label>من</label>
-                        <input v-model="timeStart" type="date" />
+                    <div
+                        ref="enterTimeElement"
+                        class="select-date"
+                        :class="{
+                            active: enterTimeObj.status,
+                            left: enterTimeObj.dir === 'left',
+                            rigth: enterTimeObj.dir === 'rigth',
+                        }"
+                    >
+                        <div>
+                            <label>من</label>
+                            <input v-model="timeStart" type="date" />
+                        </div>
+                        <div>
+                            <label>الى</label>
+                            <input v-model="timeEnd" type="date" />
+                        </div>
+                        <button @click="enterTime">تم</button>
                     </div>
-                    <div>
-                        <label>الى</label>
-                        <input v-model="timeEnd" type="date" />
-                    </div>
-                    <button @click="selectTimes">تم</button>
-                </div>
                 </template>
-
             </li>
         </ul>
     </div>
@@ -151,11 +214,13 @@ function selectTimes() {
     opacity: 0;
     transition: 0.3s;
     top: 90%;
+    pointer-events: none;
 
     &.active {
         visibility: visible;
         opacity: 1;
         top: 100%;
+        pointer-events: all;
     }
     svg {
         fill: $color_a !important;
@@ -173,9 +238,8 @@ function selectTimes() {
             .icon {
                 transition: 0.3s;
 
-                    visibility: hidden;
-                    opacity: 0;
-
+                visibility: hidden;
+                opacity: 0;
             }
             &:hover {
                 background-color: $color_backgroud;
@@ -185,7 +249,6 @@ function selectTimes() {
                     opacity: 1;
                 }
             }
-
 
             .select-date {
                 position: absolute;
@@ -201,6 +264,7 @@ function selectTimes() {
                 opacity: 0;
                 visibility: hidden;
                 transition: 0.3s;
+                // pointer-events: none;
 
                 input {
                     @extend .main-input;
@@ -212,8 +276,18 @@ function selectTimes() {
 
                 &.active {
                     opacity: 1;
-                visibility: visible;
-                right: calc(100% + 10px);
+                    visibility: visible;
+                    // pointer-events: all;
+                    // transform: translateY(-50%) translateX(-100%);
+                }
+
+                &.left {
+                    right: calc(100% + 10px);
+                }
+
+                &.rigth {
+                    right: -10px;
+                    transform: translateY(-50%) translateX(100%);
                 }
             }
 
@@ -223,7 +297,6 @@ function selectTimes() {
 
             // }
             // }
-
         }
     }
 }
