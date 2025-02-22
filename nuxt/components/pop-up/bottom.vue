@@ -1,11 +1,27 @@
+<script setup lang="ts">
+const active = ref(false);
+
+
+function close() {
+    active.value = false
+}
+
+defineExpose({
+    show() {
+        active.value = true;
+    }
+});
+
+</script>
+
 <template>
-    <div class="pop-up">
+    <div class="pop-up" :class="{active:active}">
         <div class="box">
             <div class="title">
                 <div class="slot">
                     <slot name="title"></slot>
                 </div>
-                <button class="close"><i class="ri-close-line"></i></button>
+                <button @click="close" class="close"><i class="ri-close-line"></i></button>
             </div>
             <slot></slot>
             <div class="buttons">
@@ -27,17 +43,30 @@
     z-index: 100;
     left: 0;
     top: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.3s;
 
-    .box {
+    &.active {
+        visibility: visible;
+        opacity: 1;
+
+        > .box {
+            transform: translateX(-50%) translateY(0%);
+        }
+    }
+
+    > .box {
         bottom: 0;
         width: 550px;
         position: absolute;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translateX(-50%)  translateY(100%);
         background-color: $color_white;
         padding: 30px 40px;
         padding-bottom: 14px;
         border-radius: 70px 70px 0 0 ;
+        transition: 0.3s;
 
         > {
             .title {
@@ -46,12 +75,14 @@
                 .slot {
                     h1 {
                         color: $color_a;
+                        font-size:40px;
                         // font-size: ;
                     }
                 }
 
                 .close {
                     position: absolute;
+                    cursor: pointer;
                     left: 0;
                     top: 50%;
                     transform: translateY(-50%);
@@ -80,6 +111,7 @@
                     @extend .main-button;
                     text-align: right;
                     padding-right: 20px;
+                    cursor: pointer;
                     vertical-align: middle;
                     i {
                         margin-inline-end: 7px;

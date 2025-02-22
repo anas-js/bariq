@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('services_orders', function (Blueprint $table) {
             $table->id();
+            $table->decimal('amount');
+            // $table->tinyInteger('status');
+            $table->integer('quantity');
+            $table->foreignId('item_id')->nullable()->references('id')->on('items')->onDelete('set null');
+            $table->foreignId('service_id')->nullable()->references('id')->on('services')->onDelete('set null');
+            $table->foreignId('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->timestamps();
         });
     }

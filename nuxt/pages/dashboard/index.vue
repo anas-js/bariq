@@ -390,8 +390,14 @@ function preTimeLineSelect(event: any) {
 
 const lastOrders = ref(getData().lastOrders());
 
+
+
 function showCustomer(id: number) {}
+
+
 </script>
+
+
 
 <template>
     <div class="dashboard-page">
@@ -678,7 +684,7 @@ function showCustomer(id: number) {}
                         <p><Status :status="row.status"></Status></p>
                         <p>{{ $help().formatDate(row.date) }}</p>
                         <div>
-                            <button class="expand">
+                            <button @click="$refs['PopUpOrder'].showOrder(row.id)" class="expand">
                                 <i class="ri-expand-diagonal-2-line"></i>
                             </button>
                         </div>
@@ -686,17 +692,7 @@ function showCustomer(id: number) {}
                 </Tabel>
             </div>
         </div>
-
-        <!-- <PopUpBottom>
-            <template #title>
-                <h1>العنوان</h1>
-            </template>
-            124
-
-            <template #buttons>
-               <button><i class="ri-receipt-line"></i> طباعة / عرض الفاتورة</button>
-               <button class="second"><i class="ri-pencil-line"></i> تعديل الطلب</button>
-            </template>
-        </PopUpBottom> -->
+        <PopUpOrder ref="PopUpOrder">
+        </PopUpOrder>
     </div>
 </template>

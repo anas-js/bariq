@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->char('phone',9);
+            $table->enum('sex',['male','female'])->nullable();
+            $table->integer('age')->nullable();
             $table->timestamps();
         });
     }

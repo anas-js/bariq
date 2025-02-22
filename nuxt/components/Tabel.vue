@@ -14,6 +14,8 @@ const props = defineProps({
         <div class="row" v-for="row in data">
             <slot name="row" :row="row"></slot>
         </div>
+
+        <slot name="content"></slot>
     </div>
 </template>
 

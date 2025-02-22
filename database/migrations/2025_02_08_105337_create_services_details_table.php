@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('services_details', function (Blueprint $table) {
             $table->id();
+            $table->decimal('amount');
+            $table->foreignId('item_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreignId('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->timestamps();
         });
     }

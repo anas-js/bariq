@@ -5,19 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Hash;
 
-class Order extends Model
+class Laundry extends Model
 {
+
+    protected $table = 'laundrys';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'status',
-        'amount',
-        'done_at',
-        'received_at',
+        'name',
+        'time_open',
+        'time_close',
+        'whatsapp_token',
     ];
 
     /**
@@ -27,18 +31,14 @@ class Order extends Model
      */
     protected $hidden = [
         'id',
+        'created_at',
         'updated_at',
     ];
 
 
     // Relationships
-    public function services(): HasMany
+    public function admin(): HasMany
     {
-        return $this->hasMany(Services_Order::class);
-    }
-
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
+        return $this->hasMany(Admin::class);
     }
 }

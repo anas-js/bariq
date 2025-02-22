@@ -12,7 +12,7 @@ class createAdmin extends Command
      *
      * @var string
      */
-    protected $signature = 'admin:create';
+    protected $signature = 'bariq:admin:create';
 
     /**
      * The console command description.
