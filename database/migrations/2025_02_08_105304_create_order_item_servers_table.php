@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laundrys', function (Blueprint $table) {
+        Schema::create('order_item_servers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            // $table->time('time_open');
-            // $table->time('time_close');
-            $table->string('whatsapp_token');
+            $table->foreignId('service_id')->nullable()->references('id')->on('services')->onDelete('set null');
+            $table->foreignId('order_item_id')->nullable()->references('id')->on('order_items')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laundrys');
+        Schema::dropIfExists('servers_item_order');
     }
 };

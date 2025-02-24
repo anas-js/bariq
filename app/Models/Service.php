@@ -30,9 +30,14 @@ class Service extends Model
 
 
     // Relationships
-    public function services_order(): HasMany
+    // public function services_order(): HasMany
+    // {
+    //     return $this->hasMany(Services_Order::class);
+    // }
+
+    public function service_details(): HasMany
     {
-        return $this->hasMany(Services_Order::class);
+        return $this->hasMany(Services_Detail::class);
     }
 
 
@@ -45,4 +50,11 @@ class Service extends Model
     {
         return $this->hasMany(Services_Merges::class,'merge_with_service_id');
     }
+
+    // ----------------
+    public function details($item_id)
+    {
+        return $this->service_details()->where('item_id',$item_id)->first();
+    }
+
 }

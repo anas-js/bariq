@@ -5,19 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Services_Order extends Model
+class Order_Item_Servers extends Model
 {
-
-    protected $table = 'services_orders';
+    //
+    protected $table = 'order_item_servers';
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'amount',
-        'quantity',
-        'item_id',
         'service_id'
     ];
 
@@ -30,24 +27,13 @@ class Services_Order extends Model
         'id',
         'updated_at',
         'created_at',
-        'order_id',
-        'service_id',
-        'item_id'
+        "order_item_id"
+        // 'service_id',
     ];
 
     // Relationships
-    public function service(): BelongsTo
-    {
-        return $this->belongsTo(Service::class);
-    }
-
-    public function order(): BelongsTo
-    {
-        return $this->belongsTo(Order::class);
-    }
-
     public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Order_Items::class);
     }
 }

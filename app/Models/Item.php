@@ -30,19 +30,19 @@ class Item extends Model
     ];
 
     // Relationships
-    public function services_merges(): HasMany
-    {
-        return $this->hasMany(Services_Merges::class);
-    }
+    // public function services_merges(): HasMany
+    // {
+    //     return $this->hasMany(Services_Merges::class);
+    // }
 
 
-    public function services_details(): HasMany
-    {
-        return $this->hasMany(Services_Detail::class);
-    }
+    // public function services_details(): HasMany
+    // {
+    //     return $this->hasMany(Services_Detail::class);
+    // }
 
-    public function services_order(): HasMany
-    {
-        return $this->hasMany(Services_Order::class);
-    }
+    // public function services_order(): HasMany
+    // {
+    //     return $this->hasMany(Services_Order::class);
+    // }
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Services_Detail extends Model
 {
 
-    protected $table = 'services_detail';
+    protected $table = 'services_details';
     /**
      * The attributes that are mass assignable.
      *
@@ -16,6 +16,8 @@ class Services_Detail extends Model
      */
     protected $fillable = [
         'amount',
+        'item_id',
+        'service_id'
     ];
 
     /**
@@ -42,5 +44,14 @@ class Services_Detail extends Model
     {
         return $this->belongsTo(Item::class);
     }
+
+    public function detail($item_id): BelongsTo
+    // where('service_id',$servers->id)
+    {
+        return $this->where('item_id',$item_id)->first();
+    }
+
+
+
 
 }

@@ -23,4 +23,7 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     Route::get('/orders',[DashboardController::class,'orders']);
     Route::get('/customers',[DashboardController::class,'customers']);
     Route::get('/activity-time',[DashboardController::class,'activityTime']);
+    Route::get('/execution-average-time',[DashboardController::class,'executionAverageTime']);
+    Route::get('/delivery-average-time',[DashboardController::class,'deliveryAverageTime']);
+    Route::get('/most-services-order',[DashboardController::class,'mostServicesOrder']);
 });

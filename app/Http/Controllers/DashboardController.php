@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DashboardController\incomeReq;
 use App\Models\Order;
+use App\Models\Order_Items;
+use App\Models\Services_Order;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -123,7 +126,7 @@ class DashboardController extends Controller
 
 
             if ($totalOrders != $totalLastOrders && $totalLastOrders != 0) {
-                $pcAmount = (($totalOrders - $totalLastOrders) /$totalLastOrders) * 100;
+                $pcAmount = (($totalOrders - $totalLastOrders) / $totalLastOrders) * 100;
 
                 $data['status']['value'] = $pcAmount < 0 ? -1 : 1;
                 $data['status']['pc'] = abs($pcAmount);
@@ -192,7 +195,7 @@ class DashboardController extends Controller
 
 
             if ($totalOrders != $totalLastOrders && $totalLastOrders != 0) {
-                $pcAmount = (($totalOrders - $totalLastOrders) /$totalLastOrders) * 100;
+                $pcAmount = (($totalOrders - $totalLastOrders) / $totalLastOrders) * 100;
 
                 $data['status']['value'] = $pcAmount < 0 ? -1 : 1;
                 $data['status']['pc'] = abs($pcAmount);
@@ -208,7 +211,8 @@ class DashboardController extends Controller
         return $data;
     }
 
-    public function activityTime(incomeReq $request) {
+    public function activityTime(incomeReq $request)
+    {
         $times = collect([]);
 
         $timeline = $this->timelineHandle();
@@ -221,87 +225,188 @@ class DashboardController extends Controller
             $created_houer = Carbon::parse($o->created_at)->hour;
 
 
-            if(isset($times[$created_houer])) {
+            if (isset($times[$created_houer])) {
                 // $times[$created_houer]++;
-                $times[$created_houer] =$times[$created_houer]+1;
+                $times[$created_houer] = $times[$created_houer] + 1;
             } else {
                 $times[$created_houer] = 1;
             }
         });
 
 
-        $times =  collect([
-            4 => 3,
-            5 => 3,
-            10 => 3,
-            11 => 3,
-            12 => 3,
-            14 => 3,
-            19 => 3,
-            20 => 3,
-        ]);
+        // $times =  collect([]);
 
         $data = [
             'times' => [],
             'pc' => []
         ];
 
-        // $times = $times->sort(fn($a,$b)=>$b-$a);
+        $times = $times->sort(fn($a, $b) => $b - $a);
 
         $lastKey = null;
         $skip = 1;
+
         // $lastKeyhour = null;
 
+        $stop = false;
 
-        $times->each(function ($v,$k) use (&$lastKey,&$times,&$data,&$skip){
 
-            if(isset($lastKey)) {
+        $times->each(function ($v, $k) use (&$lastKey, &$times, &$data, &$skip, &$stop) {
+            if ($k === 'lastValue') {
+                return false;
+            }
 
-                if($lastKey+$skip === $k) {
-                    // dump($times[$lastKey+$skip] ." =  ". $times[$lastKey]+$v);
-                    // dump(" key: ". $lastKey+$skip." last Value :". $times[$lastKey+$skip]." add:".$times[$lastKey+$skip-1] . " last key:".$lastKey. " skip :".$skip);
-                   $times[$lastKey+$skip] += $times[$lastKey+$skip-1];
+            if ($stop) {
+                $times['lastValue'] += $v;
+                $times->forget($k);
+                return;
+            }
+            if (isset($lastKey)) {
+                if ($lastKey + $skip === $k) {
+
+                    $times[$lastKey + $skip] += $times[$lastKey + $skip - 1];
 
 
                     array_pop($data['times']);
-                    // dump($lastKey);
 
-                    //  $times[$lastKey+$skip-1] = null;
-                     $times->forget($lastKey+$skip-1);
-                    // if(!isset($times[$lastKey])) {
-                    //     $times->forget($lastKey);
-                    // }
+                    $times->forget($lastKey + $skip - 1);
 
-
-
-                    //
-
-                    array_push($data['times'],"من ".$this->timeTitle($lastKey)." الى ". $this->timeTitle($k+1));
+                    array_push($data['times'], "من " . $this->timeTitle($lastKey) . " الى " . $this->timeTitle($k + 1));
 
                     $skip++;
-
                 } else {
-
-                    array_push($data['times'],"من ".$this->timeTitle($k)." الى ".$this->timeTitle($k+1));
+                    if (count($data['times']) == 4) {
+                        $stop = true;
+                        $times['lastValue'] = $v;
+                        $times->forget($k);
+                        array_push($data['times'], 'اوقات اخرى');
+                        return;
+                        // return false;
+                    }
+                    array_push($data['times'], "من " . $this->timeTitle($k) . " الى " . $this->timeTitle($k + 1));
                     $skip = 1;
                     $lastKey = $k;
-
                 }
-
             } else {
-                array_push($data['times'],"من ".$this->timeTitle($k)." الى ".$this->timeTitle($k+1));
+                array_push($data['times'], "من " . $this->timeTitle($k) . " الى " . $this->timeTitle($k + 1));
 
                 $lastKey = $k;
-
             }
-
         });
 
-        dd($times,$data);
+
+        $times = $times->values();
+
+        if ($times->sum() != 0) {
+            $pcEachOne = 100 / $times->sum();
+
+            $times->each(function ($v) use (&$data, $pcEachOne) {
+
+                array_push($data['pc'], $v * $pcEachOne);
+            });
+        } else {
+            $data = [
+                'times' => ['لا يوجد نشاط'],
+                'pc' => [100]
+            ];
+        }
+        // if(count($data['times']) > 5) {
+
+        // }
+
+        return $data;
+    }
+
+    public function executionAverageTime(incomeReq $request)
+    {
+
+        $timeline = $this->timelineHandle();
+        $dates = $timeline['data'];
+        $orders = collect(Order::whereDate('created_at', '>=', $dates['start'])->whereDate('created_at', '<=',  $dates['end'])->selectRaw('TIMESTAMPDIFF(SECOND,created_at,done_at) as exe_time')->pluck('exe_time'))->filter();
+
+
+        $avgSec = $orders->isNotEmpty() ? $orders->sum() / $orders->count() : 0;
+
+
+        return $this->calcAvg($avgSec);
+    }
+
+    public function deliveryAverageTime(incomeReq $request)
+    {
+
+        $timeline = $this->timelineHandle();
+        $dates = $timeline['data'];
+        $orders = collect(Order::whereDate('created_at', '>=', $dates['start'])->whereDate('created_at', '<=',  $dates['end'])->selectRaw('TIMESTAMPDIFF(SECOND,done_at, received_at) as delivery_time')->pluck('delivery_time'))->filter();
+
+
+        $avgSec = $orders->isNotEmpty() ? $orders->sum() / $orders->count() : 0;
 
 
 
+        return $this->calcAvg($avgSec);
+    }
 
+    public function mostServicesOrder(incomeReq $request)
+    {
+        $timeline = $this->timelineHandle();
+        $dates = $timeline['data'];
+
+
+
+        // $orders = collect(Order::);
+
+        // $ServicesOrdered = collect(Order_Items::join('orders', 'services_orders.order_id', '=', 'orders.id')->whereDate('orders.created_at', '>=', $dates['start'])->whereDate('orders.created_at', '<=',  $dates['end'])->get());
+
+        $order_items = collect(Order_Items::with(['itemServers'])->whereHas('order', function ($q) use ($dates) {
+            $q->whereDate('orders.created_at', '>=', $dates['start'])->whereDate('orders.created_at', '<=',  $dates['end']);
+        })->get());
+
+     dd($order_items->toArray());
+
+
+        // $ServicesOrdered = collect([
+        //     [
+        //         'quantity' => 1,
+        //         'item_id' => 1,
+        //         'service_id' => 1,
+        //         'order_id' => 1
+        //     ],
+        //     [
+        //         'quantity' => 1,
+        //         'item_id' => 1,
+        //         'service_id' => 2,
+        //         'order_id' => 1
+        //     ]
+        // ]);
+
+        // شماغ - غسيل كوي
+        // شماغ - كوي
+
+
+        // $data = collect([
+        //     [
+        //         'item' => 10,
+        //         'servers' => [1,2,3],
+        //         'total' => 1,
+        //     ]
+        // ]);
+
+
+        // dd($data->where(function ($s) use ($ServicesOrdered) {
+
+        //     $groupServers = $ServicesOrdered->where(function ($ss) use ($s) {
+        //         ($ss->order_id == $s->id) && ($ss->item_id == $s->item_id);
+        //     });
+
+
+        //     // return ($s['item'] == 10) && ;
+        // }));
+
+        // $ServicesOrdered->each(function ($s) {
+        //     $s->item_id;
+        //     $s->service_id;
+        //     $s->quantity;
+        // });
 
     }
 
@@ -424,22 +529,93 @@ class DashboardController extends Controller
         }
     }
 
-    private function timeTitle($hour)  {
+    private function timeTitle($hour)
+    {
 
 
-        if($hour == 24) {
+        if ($hour == 24) {
             return "12 صباحاً";
-        } else if($hour < 12) {
-            if($hour==0) {
-                 return "12 صباحاً";
+        } else if ($hour < 12) {
+            if ($hour == 0) {
+                return "12 صباحاً";
             }
             return "$hour صباحاً";
         } else {
-            $hour = $hour-12;
-            if($hour==0) {
+            $hour = $hour - 12;
+            if ($hour == 0) {
                 return "12 مساءً";
-           }
+            }
             return "$hour مساءً";
         }
+    }
+    private function calcAvg($avgSec)
+    {
+
+        $second = $avgSec % 60;
+        $mint = ($avgSec / 60) % 60;
+        $hour = ($avgSec / 60 / 60) % 24;
+        $day = ($avgSec / 60 / 60 / 24) % 30;
+        $month = ($avgSec / 60 / 60 / 24 / 30) % 12;
+        $year = ($avgSec / 60 / 60 / 24 / 30 / 12);
+
+
+        function merge($num1, $num2, $full)
+        {
+
+            if (round($num2) == $full) {
+                return floor($num1) + 1;
+            }
+
+            if ($num2 !== 0) {
+                $pcByOne = (100 / $full) * $num2;
+                return floor($num1) . "." . strval($pcByOne)[0];
+            }
+
+
+            return floor($num1);
+        }
+
+        // dd();
+
+        if ($year >= 1) {
+            return [
+                'type' => 'سنة',
+                'time' => merge($year, $month, 12)
+            ];
+        }
+
+        if ($month >= 1) {
+            return [
+                'type' => 'شهر',
+                'time' => merge($month, $day, 30)
+            ];
+        }
+
+
+        if ($day >= 1) {
+            return [
+                'type' => 'يوم',
+                'time' => merge($day, $hour, 24)
+            ];
+        }
+
+        if ($mint >= 1) {
+            return [
+                'type' => 'دقيقة',
+                'time' => merge($mint, $second, 60)
+            ];
+        }
+
+        if ($second >= 1) {
+            return [
+                'type' => 'ثانية',
+                'time' => $second
+            ];
+        }
+
+        return [
+            'type' => 'ثانية',
+            'time' => 0
+        ];
     }
 }

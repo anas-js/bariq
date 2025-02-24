@@ -7,7 +7,10 @@ use App\Models\Customer;
 use App\Models\Item;
 use App\Models\Laundry;
 use App\Models\Order;
+use App\Models\Order_Item_Servers;
+use App\Models\Order_Items;
 use App\Models\Service;
+use App\Models\Services_Detail;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -37,15 +40,16 @@ class init extends Command
         Item::truncate();
         Service::truncate();
         Customer::truncate();
+        Services_Detail::truncate();
         Order::truncate();
+        Order_Items::truncate();
+        Order_Item_Servers::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
 
         // create Landry
         $laundry = Laundry::create([
             'name' => 'مغسلة بريق',
-            'time_open' => now(),
-            'time_close'  => now(),
             'whatsapp_token'  => '1111dfsdf',
         ]);
 
@@ -74,12 +78,48 @@ class init extends Command
             ]
         );
 
+        Item::create(
+            [
+                'name' => 'ثوب شتوي',
+                'status' => 1
+            ]
+        );
+
+        Item::create(
+            [
+                'name' => 'شماغ شتوي',
+                'status' => 1
+            ]
+        );
+
+        Item::create(
+            [
+                'name' => 'بطانية',
+                'status' => 1
+            ]
+        );
+
+        Item::create(
+            [
+                'name' => 'بدلة',
+                'status' => 1
+            ]
+        );
+
+        Item::create(
+            [
+                'name' => 'ثوب نسائي',
+                'status' => 1
+            ]
+        );
+
+
         // create Service
         Service::create(
 
             [
 
-                'name' => 'غسيل',
+                'name' => 'غسيل عادي',
                 'status' => 1
             ]
 
@@ -89,35 +129,210 @@ class init extends Command
 
             [
 
-                'name' => 'كوي',
+                'name' => 'غسيل جاف',
+                'status' => 1
+            ]
+
+        );
+
+        Service::create(
+
+            [
+
+                'name' => 'كوي عادي',
+                'status' => 1
+            ]
+
+        );
+
+        Service::create(
+
+            [
+
+                'name' => 'كوي بخار',
                 'status' => 1
             ]
 
         );
 
 
+        Service::create(
+
+            [
+
+                'name' => 'غسيل (إزالة الحبر)',
+                'status' => 1
+            ]
+
+        );
 
 
-        $customer = Customer::create([
-            'name' => 'anas',
+        // create Service Details
+        for ($i = 1; $i <= 7; $i++) {
+            for ($j = 1; $j <= 5; $j++) {
+                Services_Detail::create([
+                    'amount' => rand(2, 10),
+                    'item_id' => $i,
+                    'service_id' => $j
+                ]);
+            }
+        }
+
+
+        // Create Customer
+        Customer::create([
+            'name' => 'أنس',
             'phone' => '555555555',
         ]);
 
-        $order =  $customer->orders()->create([
-            'status' => 1,
-            'amount' => 20,
-            'done_at' => now(),
-            'received_at' =>  now(),
+        Customer::create([
+            'name' => 'راكان محمد',
+            'phone' => '555555555',
+        ]);
+
+        Customer::create([
+            'name' => 'سعد الغامدي',
+            'phone' => '555555555',
+        ]);
+
+        Customer::create([
+            'name' => 'سعود الوابل',
+            'phone' => '555555555',
         ]);
 
 
+        // Create Order
 
-        $order->services()->create([
-            'amount' => 20,
-            'quantity' => 2,
-            'service_id' => 1,
-            'item_id' => 1
-        ]);
+
+
+        for ($i = 0; $i < 10; $i++) {
+            $customer = Customer::inRandomOrder()->first();
+            $item = Item::inRandomOrder()->first();
+            $date = now();
+
+            $order =  $customer->orders()->create([
+                'status' => 5,
+                'amount' => 1,
+                'done_at' => $date->addMinute(10),
+                'received_at' => $date->addMinute(30)
+            ]);
+
+
+            $order_item = $order->orderItems()->create([
+                'amount' => 0,
+                'quantity' => 1,
+                'item_id' => $item->id,
+            ]);
+
+            // Select Servers
+            $servers = Service::inRandomOrder()->first();
+            $serversDetal = $servers->details($item->id);
+
+            // Added Servers
+            $order_item->itemServers()->create([
+                'service_id' => $servers->id
+            ]);
+
+            $order_item->amount += $serversDetal->amount;
+
+            $order_item->save();
+
+            $order->amount += $order_item->amount;
+
+            $order->save();
+        }
+
+
+        for ($i = 0; $i < 10; $i++) {
+            $customer = Customer::inRandomOrder()->first();
+            $date = now();
+
+            $order =  $customer->orders()->create([
+                'status' => 5,
+                'amount' => 1,
+                'done_at' => $date->addMinute(10),
+                'received_at' => $date->addMinute(30)
+            ]);
+
+            for ($j = 4; $j < 4; $j++) {
+                $item = Item::inRandomOrder()->first();
+
+                $order_item = $order->orderItems()->create([
+                    'amount' => 0,
+                    'quantity' => 1,
+                    'item_id' => $item->id,
+                ]);
+
+
+                for ($o = 0; $o < 3; $o++) {
+                    // Select Servers
+                    $servers = Service::inRandomOrder()->first();
+                    $serversDetal = $servers->details($item->id);
+
+                    // Added Servers
+                    $order_item->itemServers()->create([
+                        'service_id' => $servers->id
+                    ]);
+
+                    $order_item->amount += $serversDetal->amount;
+                }
+
+
+                $order_item->save();
+            }
+
+            $order->amount += $order_item->amount;
+
+            $order->save();
+        }
+
+
+
+        for ($i = 0; $i < 10; $i++) {
+
+            $customer = Customer::inRandomOrder()->first();
+            $item = Item::inRandomOrder()->first();
+            $date = now();
+
+            $order =  $customer->orders()->create([
+                'status' => 5,
+                'amount' => 1,
+                'done_at' => $date->addMinute(10),
+                'received_at' => $date->addMinute(30)
+            ]);
+
+
+            $order_item = $order->orderItems()->create([
+                'amount' => 0,
+                'quantity' => 1,
+                'item_id' => $item->id,
+            ]);
+
+            for ($j = 0; $j < 3; $j++) {
+                // Select Servers
+                $servers = Service::inRandomOrder()->first();
+                $serversDetal = $servers->details($item->id);
+
+                // Added Servers
+                $order_item->itemServers()->create([
+                    'service_id' => $servers->id
+                ]);
+
+                $order_item->amount += $serversDetal->amount;
+            }
+
+
+
+
+
+            $order_item->save();
+
+            $order->amount += $order_item->amount;
+
+            $order->save();
+        }
+
+
 
 
 

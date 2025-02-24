@@ -6,18 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Order extends Model
+class Order_Items extends Model
 {
+
+    protected $table = 'order_items';
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'status',
         'amount',
-        'done_at',
-        'received_at',
+        'quantity',
+        'item_id',
+        // 'service_id'
     ];
 
     /**
@@ -28,17 +30,25 @@ class Order extends Model
     protected $hidden = [
         'id',
         'updated_at',
+        'created_at',
+        'order_id',
+        // 'service_id',
+        // 'item_id'
     ];
 
-
     // Relationships
-    public function orderItems(): HasMany
+    public function itemServers(): HasMany
     {
-        return $this->hasMany(Order_Items::class);
+        return $this->hasMany(Order_Item_Servers::class,'order_item_id');
     }
 
-    public function customer(): BelongsTo
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Order::class);
+    }
+
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(Item::class);
     }
 }
