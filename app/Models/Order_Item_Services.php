@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Order_Item_Servers extends Model
+class Order_Item_Services extends Model
 {
     //
-    protected $table = 'order_item_servers';
+    protected $table = 'order_item_services';
     /**
      * The attributes that are mass assignable.
      *
@@ -35,5 +35,10 @@ class Order_Item_Servers extends Model
     public function item(): BelongsTo
     {
         return $this->belongsTo(Order_Items::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
     }
 }

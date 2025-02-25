@@ -357,46 +357,92 @@ class DashboardController extends Controller
 
         // $ServicesOrdered = collect(Order_Items::join('orders', 'services_orders.order_id', '=', 'orders.id')->whereDate('orders.created_at', '>=', $dates['start'])->whereDate('orders.created_at', '<=',  $dates['end'])->get());
 
-        $order_items = collect(Order_Items::with(['itemServers'])->whereHas('order', function ($q) use ($dates) {
+        $order_items = collect(Order_Items::with(['itemServers' => function ($q) {
+            $q->with('service');
+        }, 'item'])->whereHas('order', function ($q) use ($dates) {
             $q->whereDate('orders.created_at', '>=', $dates['start'])->whereDate('orders.created_at', '<=',  $dates['end']);
         })->get());
 
-     dd($order_items->toArray());
+        // dd($order_items->toArray());
+
+        $preprocess = collect([]);
 
 
-        // $ServicesOrdered = collect([
-        //     [
-        //         'quantity' => 1,
-        //         'item_id' => 1,
-        //         'service_id' => 1,
-        //         'order_id' => 1
-        //     ],
-        //     [
-        //         'quantity' => 1,
-        //         'item_id' => 1,
-        //         'service_id' => 2,
-        //         'order_id' => 1
-        //     ]
-        // ]);
-
-        // شماغ - غسيل كوي
-        // شماغ - كوي
+        // dd();
 
 
-        // $data = collect([
-        //     [
-        //         'item' => 10,
-        //         'servers' => [1,2,3],
-        //         'total' => 1,
-        //     ]
-        // ]);
+
+        $order_items->each(function ($o_item) use ($preprocess) {
+
+            $hasSameItem = $preprocess->search(function ($d) use ($o_item) {
+                return ($d['item'] == $o_item->item['id']) && collect($o_item->itemServers->values())->pluck('service_id')->diff($d['servers'])->isEmpty();
+            });
 
 
-        // dd($data->where(function ($s) use ($ServicesOrdered) {
 
-        //     $groupServers = $ServicesOrdered->where(function ($ss) use ($s) {
-        //         ($ss->order_id == $s->id) && ($ss->item_id == $s->item_id);
-        //     });
+            if ($hasSameItem === false) {
+                $services = collect($o_item->itemServers->values())->sortBy('service_id');
+
+
+
+                $preprocess->push([
+                    'item' => $o_item->item['id'],
+                    'servers' => $services->pluck('service_id')->toArray(),
+                    'total' => $o_item['quantity'],
+                    'names' => [
+                        'item' => $o_item['item']['name'],
+                        'servers' => $services->map(function ($s) {
+                            return $s['service']['name'];
+                        })->values(),
+                    ]
+                ]);
+            } else {
+
+                $item = $preprocess->get($hasSameItem);
+                $item['total'] += $o_item['quantity'];
+                $preprocess->put($hasSameItem, $item);
+            }
+        });
+
+
+        $data = [];
+
+        if ($preprocess->isNotEmpty()) {
+
+            $pc = 100 / $preprocess->sum('total');
+
+            $preprocess->sortByDesc('total')->values()->each(function ($pre, $i) use (&$data, $pc) {
+
+
+
+
+                if ($i === 4) {
+                    array_push($data, [
+                        'title' => 'أخرى',
+                        'pc' => round($pc * $pre['total'], 1)
+                    ]);
+                } else if ($i > 4) {
+
+                    $data[4]['pc'] += round($pc * $pre['total'], 1);
+                } else {
+                    array_push($data, [
+                        'title' => $pre['names']['item'] . ' - ' . $pre['names']['servers']->implode(', '),
+                        'pc' => round($pc * $pre['total'], 1)
+                    ]);
+                }
+            });
+        }
+
+        // dd($data);
+
+
+
+        return [
+            'services' => collect($data)->sortByDesc('pc')->values()
+        ];
+
+
+
 
 
         //     // return ($s['item'] == 10) && ;

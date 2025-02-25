@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_item_servers', function (Blueprint $table) {
+        Schema::create('order_item_services', function (Blueprint $table) {
             $table->id();
             $table->foreignId('service_id')->nullable()->references('id')->on('services')->onDelete('set null');
             $table->foreignId('order_item_id')->nullable()->references('id')->on('order_items')->onDelete('cascade');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('servers_item_order');
+        Schema::dropIfExists('order_item_services');
     }
 };

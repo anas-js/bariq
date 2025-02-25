@@ -39,7 +39,7 @@ class Order_Items extends Model
     // Relationships
     public function itemServers(): HasMany
     {
-        return $this->hasMany(Order_Item_Servers::class,'order_item_id');
+        return $this->hasMany(Order_Item_Services::class,'order_item_id');
     }
 
     public function order(): BelongsTo

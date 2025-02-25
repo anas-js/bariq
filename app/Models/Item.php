@@ -24,7 +24,7 @@ class Item extends Model
      * @var list<string>
      */
     protected $hidden = [
-        'id',
+        // 'id',
         'updated_at',
         'created_at'
     ];

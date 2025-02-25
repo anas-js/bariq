@@ -7,7 +7,7 @@ use App\Models\Customer;
 use App\Models\Item;
 use App\Models\Laundry;
 use App\Models\Order;
-use App\Models\Order_Item_Servers;
+use App\Models\Order_Item_Services;
 use App\Models\Order_Items;
 use App\Models\Service;
 use App\Models\Services_Detail;
@@ -43,7 +43,7 @@ class init extends Command
         Services_Detail::truncate();
         Order::truncate();
         Order_Items::truncate();
-        Order_Item_Servers::truncate();
+        Order_Item_Services::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
 
