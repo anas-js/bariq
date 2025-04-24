@@ -45,6 +45,7 @@ class Services_Detail extends Model
         return $this->belongsTo(Item::class);
     }
 
+
     public function detail($item_id): BelongsTo
     // where('service_id',$servers->id)
     {

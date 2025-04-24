@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DashboardController\incomeReq;
+use App\Models\Laundry;
 use App\Models\Order;
 use App\Models\Order_Items;
 use App\Models\Services_Order;
@@ -14,10 +15,14 @@ class DashboardController extends Controller
 {
     public function income(incomeReq $request)
     {
-        // $admin = $request->user();
-        $timeline = $this->timelineHandle();
+
+
+
+        $timeline = $this->timelineHandle($request);
+        //
         $dates = $timeline['data'];
         $statistics = $timeline['statistics'];
+        // dd($timeline);
 
 
         $orders = collect(Order::whereDate('received_at', '>=', $dates['start'])->whereDate('received_at', '<=',  $dates['end'])->get());
@@ -64,7 +69,7 @@ class DashboardController extends Controller
                 $pcAmount = (($totalAmount - $totalLastAmount) / $totalLastAmount) * 100;
 
                 $data['status']['value'] = $pcAmount < 0 ? -1 : 1;
-                $data['status']['pc'] = abs($pcAmount);
+                $data['status']['pc'] = round(abs($pcAmount),1);
             } else if ($totalAmount != $totalLastAmount) {
                 $data['status']['value'] = 1;
                 $data['status']['pc'] = 100;
@@ -80,7 +85,7 @@ class DashboardController extends Controller
     public function orders(incomeReq $request)
     {
         // $admin = $request->user();
-        $timeline = $this->timelineHandle();
+        $timeline = $this->timelineHandle($request);
         $dates = $timeline['data'];
         $statistics = $timeline['statistics'];
 
@@ -129,7 +134,7 @@ class DashboardController extends Controller
                 $pcAmount = (($totalOrders - $totalLastOrders) / $totalLastOrders) * 100;
 
                 $data['status']['value'] = $pcAmount < 0 ? -1 : 1;
-                $data['status']['pc'] = abs($pcAmount);
+                $data['status']['pc'] = round(abs($pcAmount),1);
             } else if ($totalOrders != $totalLastOrders) {
                 $data['status']['value'] = 1;
                 $data['status']['pc'] = 100;
@@ -144,7 +149,7 @@ class DashboardController extends Controller
     public function customers(incomeReq $request)
     {
         // $admin = $request->user();
-        $timeline = $this->timelineHandle();
+        $timeline = $this->timelineHandle($request);
         $dates = $timeline['data'];
         $statistics = $timeline['statistics'];
 
@@ -198,7 +203,7 @@ class DashboardController extends Controller
                 $pcAmount = (($totalOrders - $totalLastOrders) / $totalLastOrders) * 100;
 
                 $data['status']['value'] = $pcAmount < 0 ? -1 : 1;
-                $data['status']['pc'] = abs($pcAmount);
+                $data['status']['pc'] = round(abs($pcAmount));
             } else if ($totalOrders != $totalLastOrders) {
                 $data['status']['value'] = 1;
                 $data['status']['pc'] = 100;
@@ -215,7 +220,7 @@ class DashboardController extends Controller
     {
         $times = collect([]);
 
-        $timeline = $this->timelineHandle();
+        $timeline = $this->timelineHandle($request);
         $dates = $timeline['data'];
 
         $orders = collect(Order::whereDate('created_at', '>=', $dates['start'])->whereDate('created_at', '<=',  $dates['end'])->get());
@@ -302,7 +307,7 @@ class DashboardController extends Controller
 
             $times->each(function ($v) use (&$data, $pcEachOne) {
 
-                array_push($data['pc'], $v * $pcEachOne);
+                array_push($data['pc'], round($v * $pcEachOne,1));
             });
         } else {
             $data = [
@@ -320,7 +325,7 @@ class DashboardController extends Controller
     public function executionAverageTime(incomeReq $request)
     {
 
-        $timeline = $this->timelineHandle();
+        $timeline = $this->timelineHandle($request);
         $dates = $timeline['data'];
         $orders = collect(Order::whereDate('created_at', '>=', $dates['start'])->whereDate('created_at', '<=',  $dates['end'])->selectRaw('TIMESTAMPDIFF(SECOND,created_at,done_at) as exe_time')->pluck('exe_time'))->filter();
 
@@ -334,7 +339,7 @@ class DashboardController extends Controller
     public function deliveryAverageTime(incomeReq $request)
     {
 
-        $timeline = $this->timelineHandle();
+        $timeline = $this->timelineHandle($request);
         $dates = $timeline['data'];
         $orders = collect(Order::whereDate('created_at', '>=', $dates['start'])->whereDate('created_at', '<=',  $dates['end'])->selectRaw('TIMESTAMPDIFF(SECOND,done_at, received_at) as delivery_time')->pluck('delivery_time'))->filter();
 
@@ -348,14 +353,10 @@ class DashboardController extends Controller
 
     public function mostServicesOrder(incomeReq $request)
     {
-        $timeline = $this->timelineHandle();
+        $timeline = $this->timelineHandle($request);
         $dates = $timeline['data'];
 
 
-
-        // $orders = collect(Order::);
-
-        // $ServicesOrdered = collect(Order_Items::join('orders', 'services_orders.order_id', '=', 'orders.id')->whereDate('orders.created_at', '>=', $dates['start'])->whereDate('orders.created_at', '<=',  $dates['end'])->get());
 
         $order_items = collect(Order_Items::with(['itemServers' => function ($q) {
             $q->with('service');
@@ -363,12 +364,9 @@ class DashboardController extends Controller
             $q->whereDate('orders.created_at', '>=', $dates['start'])->whereDate('orders.created_at', '<=',  $dates['end']);
         })->get());
 
-        // dd($order_items->toArray());
 
         $preprocess = collect([]);
 
-
-        // dd();
 
 
 
@@ -419,21 +417,20 @@ class DashboardController extends Controller
                 if ($i === 4) {
                     array_push($data, [
                         'title' => 'أخرى',
-                        'pc' => round($pc * $pre['total'], 1)
+                        'pc' => number_format(round($pc * $pre['total'], 1))
                     ]);
                 } else if ($i > 4) {
 
-                    $data[4]['pc'] += round($pc * $pre['total'], 1);
+                    $data[4]['pc'] += number_format(round($pc * $pre['total'], 1));
                 } else {
                     array_push($data, [
                         'title' => $pre['names']['item'] . ' - ' . $pre['names']['servers']->implode(', '),
-                        'pc' => round($pc * $pre['total'], 1)
+                        'pc' => number_format(round($pc * $pre['total'], 1))
                     ]);
                 }
             });
         }
 
-        // dd($data);
 
 
 
@@ -456,10 +453,21 @@ class DashboardController extends Controller
 
     }
 
-    private function timelineHandle()
+    public function lastOrders(Request $request) {
+        $orders = Order::query()->with('customer')->orderBy('created_at','desc')->orderBy('id','asc')->limit(5)->get();
+
+
+        return [
+            'orders' => $orders
+        ];
+    }
+
+    private function timelineHandle($request)
     {
-        $timeline = request()->timeline;
-        $isArray = request()->isArray;
+        $timeline = json_decode($request->timeline, true) ?? $request->timeline;
+
+        $isArray = $request->isArray;
+
         if ($isArray) {
 
             $dateStart = Carbon::parse($timeline['start'])->startOfDay();
@@ -561,10 +569,12 @@ class DashboardController extends Controller
                         break;
                     }
                 case "all": {
+                    // ;
+                    // Carbon::parse(Laundry::get()->first()->created_at)->format('Y-m-d')
                         return [
                             'data' => [
-                                'start' => "0000-01-01",
-                                'end' => "9999-01-01"
+                                'start' =>  Carbon::parse(Order::find(1)->created_at)->format('Y-m-d'),
+                                'end' => now()->format('Y-m-d')
                             ],
                             'statistics' => false
 

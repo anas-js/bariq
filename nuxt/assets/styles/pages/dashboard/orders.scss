@@ -1,0 +1,54 @@
+.orders-page {
+.orders {
+    margin-top: 50px;
+    color: $color_a;
+    font-size: 20px;
+
+    .loading {
+        svg {
+            fill: $color_a;
+        }
+    }
+
+
+    .title {
+        position: relative;
+        a {
+            text-decoration: none;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            color: $color_b;
+            font-weight: bold;
+            transform: translateY(-50%);
+        }
+    }
+
+    .table {
+        margin-top: 10px;
+
+        .expand {
+            display: block;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 10px;
+
+
+            i {
+                display: block;
+            }
+            @extend .main-button;
+            color: $color_a;
+            background: none;
+            cursor: pointer;
+        }
+
+        .customer {
+            cursor: pointer;
+        }
+    }
+
+}
+}
+
+

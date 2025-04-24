@@ -66,8 +66,8 @@ defineExpose({
 
     },
     done() {
-        loading.value = false;
         active.value = false;
+        loading.value = false;
         enterTimeObj.value.status = false;
         enterTimeObj.value.dir = "";
 
@@ -98,9 +98,9 @@ function selectTime(time: any) {
     emits("select", {
         time,
         done() {
+           active.value = false;
             loading.value = false;
-            active.value = false;
-            close();
+            // close();
         },
     });
 }
@@ -132,8 +132,9 @@ function enterTime() {
             },
         },
         done() {
-            loading.value = false;
             active.value = false;
+            loading.value = false;
+
             enterTimeObj.value.status = false;
             enterTimeObj.value.dir = "";
 
@@ -147,7 +148,7 @@ let handleClickOutSide: any = null;
 onMounted(() => {
     handleClickOutSide = (event: any) => {
         // @ts-ignore
-        if (!el.value.parentElement!.contains(event.target)) {
+        if (!el?.value?.parentElement!.contains(event.target)) {
             close();
         }
     };
@@ -160,7 +161,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div ref="el" class="timeline-list" :class="{ active: active }">
+    <div ref="el" class="timeline-list" v-if="active" :class="{ active: active }">
         <Loading v-if="loading" />
         <ul v-else>
             <li
@@ -168,6 +169,7 @@ onUnmounted(() => {
                 :index="index"
                 :class="{ selectTimes: typeof time.value === 'object' }"
                 @click="selectTime(time)"
+
             >
                 {{ time.title }}
 

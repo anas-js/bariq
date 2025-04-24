@@ -22,12 +22,12 @@ class Services_Merges extends Model
      * @var list<string>
      */
     protected $hidden = [
-        'id',
+         'id',
         'updated_at',
         'created_at',
-        'service_id',
+        //  'service_id',
         'item_id',
-        'merge_with_service_id'
+        // 'merge_with_service_id'
     ];
 
 

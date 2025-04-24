@@ -3,6 +3,7 @@ const option = {
   headers: {
     Accept: "application/json",
   },
+
   async onRequest({ request, options }) {
     const host = new URL(request).hostname;
     if ($app().domain.includes(host)) {
@@ -37,7 +38,7 @@ const option = {
     }
 
     if (response.status === 401 && $auth.loggedIn) {
-      await window.location.reload();
+    //   await window.location.reload();
     }
 
     if (response.status === 503) {
@@ -53,6 +54,7 @@ export const $api = {
   get: $fetch.create({
     ...option,
     method: "GET",
+
 
   }),
   post: $fetch.create({

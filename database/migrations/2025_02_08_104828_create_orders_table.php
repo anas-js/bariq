@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->tinyInteger('status');
             $table->decimal('amount');
-            $table->dateTime('done_at');
+            $table->dateTime('done_at')->nullable();
             $table->dateTime('received_at');
             $table->foreignId('customer_id')->nullable()->references('id')->on('customers')->onDelete('set null');
             $table->timestamps();

@@ -186,17 +186,27 @@ class init extends Command
         ]);
 
         Customer::create([
-            'name' => 'راكان محمد',
+            'name' => 'ضاري',
             'phone' => '555555555',
         ]);
 
         Customer::create([
-            'name' => 'سعد الغامدي',
+            'name' => 'يوسف',
             'phone' => '555555555',
         ]);
 
         Customer::create([
-            'name' => 'سعود الوابل',
+            'name' => 'ميسرة',
+            'phone' => '555555555',
+        ]);
+
+        Customer::create([
+            'name' => 'منتظر',
+            'phone' => '555555555',
+        ]);
+
+        Customer::create([
+            'name' => 'وليد',
             'phone' => '555555555',
         ]);
 
@@ -205,16 +215,18 @@ class init extends Command
 
 
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 300; $i++) {
             $customer = Customer::inRandomOrder()->first();
             $item = Item::inRandomOrder()->first();
-            $date = now();
+            $date = now()->subDay(rand(0,365));
 
-            $order =  $customer->orders()->create([
-                'status' => 5,
+            $order =  $customer->orders()->getModel()->forceCreate([
+                'status' => rand(1,5),
                 'amount' => 1,
-                'done_at' => $date->addMinute(10),
-                'received_at' => $date->addMinute(30)
+                'done_at' => $date->copy()->addMinute(rand(1,1500)),
+                'received_at' => $date->copy()->addMinute(rand(1,1500)),
+                'created_at'=> $date,
+                'customer_id' => $customer->id
             ]);
 
 
@@ -243,15 +255,17 @@ class init extends Command
         }
 
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 300; $i++) {
             $customer = Customer::inRandomOrder()->first();
-            $date = now();
+            $date = now()->subDay(rand(0,365));
 
-            $order =  $customer->orders()->create([
-                'status' => 5,
+            $order =  $customer->orders()->getModel()->forceCreate([
+                'status' =>  rand(1,5),
                 'amount' => 1,
-                'done_at' => $date->addMinute(10),
-                'received_at' => $date->addMinute(30)
+                'done_at' => $date->copy()->addMinute(rand(1,1500)),
+                'received_at' => $date->copy()->addMinute(rand(1,1500)),
+                'created_at'=> $date,
+                'customer_id' => $customer->id
             ]);
 
             for ($j = 4; $j < 4; $j++) {
@@ -288,17 +302,19 @@ class init extends Command
 
 
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 300; $i++) {
 
             $customer = Customer::inRandomOrder()->first();
             $item = Item::inRandomOrder()->first();
-            $date = now();
+            $date = now()->subDay(rand(0,365));
 
-            $order =  $customer->orders()->create([
-                'status' => 5,
+            $order =  $customer->orders()->getModel()->forceCreate([
+                'status' => rand(1,5),
                 'amount' => 1,
-                'done_at' => $date->addMinute(10),
-                'received_at' => $date->addMinute(30)
+                'done_at' => $date->copy()->addMinute(rand(1,1500)),
+                'received_at' => $date->copy()->addMinute(rand(1,1500)),
+                'created_at'=> $date,
+                'customer_id' => $customer->id
             ]);
 
 

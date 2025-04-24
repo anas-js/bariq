@@ -23,7 +23,8 @@ class Service extends Model
      * @var list<string>
      */
     protected $hidden = [
-        'id',
+        //  'id',
+        'status',
         'updated_at',
         'created_at'
     ];
@@ -41,12 +42,12 @@ class Service extends Model
     }
 
 
-    public function services_merges(): HasMany
+    public function servicesMerges(): HasMany
     {
         return $this->hasMany(Services_Merges::class);
     }
 
-    public function merge_with(): HasMany
+    public function mergeWith(): HasMany
     {
         return $this->hasMany(Services_Merges::class,'merge_with_service_id');
     }

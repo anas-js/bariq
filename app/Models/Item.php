@@ -26,7 +26,8 @@ class Item extends Model
     protected $hidden = [
         // 'id',
         'updated_at',
-        'created_at'
+        'created_at',
+        'status'
     ];
 
     // Relationships
@@ -41,8 +42,8 @@ class Item extends Model
     //     return $this->hasMany(Services_Detail::class);
     // }
 
-    // public function services_order(): HasMany
-    // {
-    //     return $this->hasMany(Services_Order::class);
-    // }
+    public function services(): HasMany
+    {
+        return $this->hasMany(Services_Detail::class)->join('services', 'services_details.service_id', '=', 'services.id')->where('services.status',true);
+    }
 }

@@ -26,40 +26,42 @@ class incomeReq extends FormRequest
     {
         // 'string'
         return [
-           'timeline'=> ['required',function (string $attr, mixed $value, Closure $falis) {
-            if(is_array($value)) {
-                if(!isset($value['start']) || !isset($value['end'])) {
-                    $falis('start and end requerd');
-                    return;
-            }
+            'timeline' => ['required', function (string $attr, mixed $value, Closure $falis) {
+                $date = json_decode($value, true) ?? $value;
+
+                // dd($date["start"]);
+                if (is_array($date)) {
+                    if (!isset($date['start']) || !isset($date['end'])) {
+                        $falis('start and end requerd');
+                        return;
+                    }
 
 
-                try {
-                  $dateStart = Carbon::parse($value['start']);
-                  $dateEnd =  Carbon::parse($value['end']);
+                    try {
+                        $dateStart = Carbon::parse($date['start']);
+                        $dateEnd =  Carbon::parse($date['end']);
 
-                  if($dateStart->greaterThan($dateEnd)) {
-                    $falis('date end must smaller');
-                  }
+                        if ($dateStart->greaterThan($dateEnd)) {
+                            $falis('date end must smaller');
+                        }
+                    } catch (Exception $e) {
+                        $falis('type date error');
+                    }
+                    // dd('is Array');
+                    $this->merge(['isArray' => true]);
 
-                } catch(Exception $e){
-                    $falis('type date error');
+                } else if (is_string($date) || is_int($date)) {
+                    if (!in_array($date, ["0", "1", "m", "30", '365', 'all'])) {
+                        $falis('select date type error');
+                    }
+
+                    $this->merge(['isArray' => false]);
+                    // request()->merge(['isArray' => false]);
+                } else {
+                    $falis('data type error');
                 }
 
-                $this->merge(['isArray'=>true]);
-
-            } else if (is_string($value)) {
-                if(!in_array($value,["0","1","m","30",'365','all'])) {
-                    $falis('select date type error');
-                }
-
-                $this->merge(['isArray'=>false]);
-            } else {
-                $falis('data type error');
-            }
-
-
-           }],
+            }],
         ];
     }
 }

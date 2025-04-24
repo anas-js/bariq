@@ -12,7 +12,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (to.meta?.guest) {
     if ($auth.loggedIn) {
-        console.log("go3");
+        // console.log("go3");
       return navigateTo('/');
     }
     return;

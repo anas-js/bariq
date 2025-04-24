@@ -40,9 +40,15 @@
             position: relative;
             padding-bottom: 90px;
 
+            .loading {
+                svg {
+                    fill: $color_a;
+                }
+            }
 
 
             .top {
+
                 > * {
                     display: inline-block;
                 }
@@ -113,9 +119,9 @@
                 .chart {
                     position: absolute;
                     width: calc(100% + 16px);
-                    bottom: 0;
+                    bottom: 22px;
                     left: -8px;
-                    height: 53%;
+                    height: 48%;
 
                     canvas {
                         overflow: hidden;
@@ -247,6 +253,12 @@
         margin-top: 50px;
         color: $color_a;
         font-size: 20px;
+
+        .loading {
+            svg {
+                fill: $color_a;
+            }
+        }
 
 
         .title {

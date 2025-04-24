@@ -1,31 +1,43 @@
 <script setup lang="ts">
+const emits = defineEmits(["close"]);
 const active = ref(false);
 
+const props = defineProps({
+    loading: Boolean,
+});
 
 function close() {
-    active.value = false
+    active.value = false;
+    emits("close");
 }
 
 defineExpose({
     show() {
         active.value = true;
-    }
+    },
+    close,
 });
-
 </script>
 
 <template>
-    <div class="pop-up" :class="{active:active}">
+    <div class="pop-up" :class="{ active: active }">
         <div class="box">
-            <div class="title">
-                <div class="slot">
-                    <slot name="title"></slot>
+
+                <div class="title">
+                    <div class="slot">
+                        <slot name="title"></slot>
+                    </div>
+                    <button @click="close" class="close">
+                        <i class="ri-close-line"></i>
+                    </button>
                 </div>
-                <button @click="close" class="close"><i class="ri-close-line"></i></button>
-            </div>
-            <slot></slot>
-            <div class="buttons">
-               <slot name="buttons"></slot>
+                <slot></slot>
+                <div class="buttons">
+                    <slot name="buttons"></slot>
+                </div>
+
+            <div v-if="loading" class="full-loading">
+            <Loading></Loading>
             </div>
         </div>
     </div>
@@ -42,6 +54,7 @@ defineExpose({
     backdrop-filter: blur(10px);
     z-index: 100;
     left: 0;
+
     top: 0;
     visibility: hidden;
     opacity: 0;
@@ -57,15 +70,16 @@ defineExpose({
     }
 
     > .box {
+        overflow: hidden;
         bottom: 0;
         width: 550px;
         position: absolute;
         left: 50%;
-        transform: translateX(-50%)  translateY(100%);
+        transform: translateX(-50%) translateY(100%);
         background-color: $color_white;
         padding: 30px 40px;
         padding-bottom: 14px;
-        border-radius: 70px 70px 0 0 ;
+        border-radius: 70px 70px 0 0;
         transition: 0.3s;
 
         > {
@@ -75,7 +89,7 @@ defineExpose({
                 .slot {
                     h1 {
                         color: $color_a;
-                        font-size:40px;
+                        font-size: 40px;
                         // font-size: ;
                     }
                 }
@@ -96,7 +110,7 @@ defineExpose({
                     i {
                         display: block;
                     }
-                    background-color:rgba($color: $color_a, $alpha: 0.2);
+                    background-color: rgba($color: $color_a, $alpha: 0.2);
                 }
             }
 
@@ -118,7 +132,6 @@ defineExpose({
                         vertical-align: middle;
                         font-weight: normal;
                         font-size: 23px;
-
                     }
 
                     &.second {
@@ -127,10 +140,25 @@ defineExpose({
                     }
 
                     &.cancel {
-                        background-color: $color_backgroud;
-                        color: $color_a;
+                        background-color: rgba($color: $color_red, $alpha: 0.1);
+                        color: $color_red;
                     }
                 }
+            }
+        }
+
+        .full-loading {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: $color_white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            left: 0;
+            svg {
+                fill: $color_a;
             }
         }
     }

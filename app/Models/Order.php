@@ -26,8 +26,9 @@ class Order extends Model
      * @var list<string>
      */
     protected $hidden = [
-        'id',
+        // 'id',
         'updated_at',
+        'customer_id' //!
     ];
 
 
